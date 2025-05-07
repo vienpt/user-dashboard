@@ -1,27 +1,31 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import type { DropdownMenuItem } from "@nuxt/ui";
 import { useColorMode } from "@vueuse/core";
-import { storeToRefs } from "pinia";
-import { useUserStore } from "../stores/user";
+import { useAuthStore } from "../stores/auth";
 import { useClerk } from "@clerk/vue";
+import { storeToRefs } from "pinia";
 
 defineProps<{
   collapsed?: boolean;
 }>();
 
-const userStore = useUserStore();
+const authStore = useAuthStore();
 const colorMode = useColorMode();
 const clerk = useClerk();
 
-const { user } = storeToRefs(userStore);
+const { userAuth } = storeToRefs(authStore);
 
-const items = computed<DropdownMenuItem[][]>(() => [
+const items: DropdownMenuItem[][] = [
   [
     {
       type: "label",
-      label: user.value.name,
-      avatar: user.value?.avatar,
+      label: userAuth.value?.name || "Guest",
+      avatar: userAuth.value?.avatar
+        ? {
+            src: userAuth.value?.avatar,
+            alt: userAuth.value?.name || "User avatar",
+          }
+        : undefined,
     },
   ],
   [
@@ -46,9 +50,8 @@ const items = computed<DropdownMenuItem[][]>(() => [
           icon: "i-lucide-sun",
           type: "checkbox",
           checked: colorMode.value === "light",
-          onSelect(e: Event) {
+          onSelect(e: globalThis.MouseEvent) {
             e.preventDefault();
-
             colorMode.value = "light";
           },
         },
@@ -62,7 +65,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
               colorMode.value = "dark";
             }
           },
-          onSelect(e: Event) {
+          onSelect(e: globalThis.MouseEvent) {
             e.preventDefault();
           },
         },
@@ -84,7 +87,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
       onSelect: () => clerk.value?.signOut(),
     },
   ],
-]);
+];
 </script>
 
 <template>
@@ -97,8 +100,11 @@ const items = computed<DropdownMenuItem[][]>(() => [
   >
     <UButton
       v-bind="{
-        ...user,
-        label: collapsed ? undefined : user?.name,
+        avatar: userAuth?.avatar ? {
+          src: userAuth.avatar,
+          alt: userAuth.name || 'User avatar'
+        } : undefined,
+        label: collapsed ? undefined : userAuth?.name || 'Guest',
         trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down',
       }"
       color="neutral"

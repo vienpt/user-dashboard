@@ -3,6 +3,7 @@ import "./assets/main.css"
 import { createApp } from "vue"
 import { createRouter, createWebHistory } from "vue-router"
 import uiPlugin from "@nuxt/ui/vue-plugin"
+import { useAuth } from '@clerk/vue'
 
 import App from "./App.vue"
 import { createPinia } from "pinia"
@@ -24,14 +25,25 @@ const router = createRouter({
     component: () => import('./pages/index.vue')
   }, {
     path: '/dashboard',
-    component: () => import('./pages/dashboard/index.vue')
+    component: () => import('./pages/dashboard/index.vue'),
+    meta: { requiresAuth: true }
   }],
   history: createWebHistory(),
 })
 
+// Navigation guard
+router.beforeEach(async (to) => {
+  const { getToken } = useAuth()
+  const token = await getToken.value()
+  
+  if (to.meta.requiresAuth && !token) {
+    return '/'
+  }
+})
+
 app.use(createPinia())
-app.use(uiPlugin)
 app.use(router)
 app.use(clerkPlugin, { publishableKey: PUBLISHABLE_KEY })
+app.use(uiPlugin)
 
-app.mount("#app")
+app.mount('#app')
