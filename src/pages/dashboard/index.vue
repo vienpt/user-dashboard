@@ -87,7 +87,7 @@ const stats = computed(() => [
     icon: "i-lucide-users",
     trend: "+12%",
     trendUp: true,
-    color: "blue"
+    color: "blue",
   },
   {
     name: "Active Users",
@@ -96,7 +96,7 @@ const stats = computed(() => [
     icon: "i-lucide-user-check",
     trend: "+8%",
     trendUp: true,
-    color: "green"
+    color: "green",
   },
   {
     name: "Total Companies",
@@ -105,7 +105,7 @@ const stats = computed(() => [
     icon: "i-lucide-building-2",
     trend: "+5%",
     trendUp: true,
-    color: "purple"
+    color: "purple",
   },
   {
     name: "Top City",
@@ -114,7 +114,7 @@ const stats = computed(() => [
     icon: "i-lucide-map-pin",
     trend: "New",
     trendUp: true,
-    color: "orange"
+    color: "orange",
   },
 ]);
 
@@ -128,7 +128,9 @@ const sorting = ref([
 ]);
 
 onMounted(async () => {
-  await userStore.getUsers();
+  if (!users.value.length) {
+    await userStore.getUsers();
+  }
 });
 </script>
 
@@ -147,7 +149,7 @@ onMounted(async () => {
             'from-blue-500/10 to-blue-500/5': stat.color === 'blue',
             'from-green-500/10 to-green-500/5': stat.color === 'green',
             'from-purple-500/10 to-purple-500/5': stat.color === 'purple',
-            'from-orange-500/10 to-orange-500/5': stat.color === 'orange'
+            'from-orange-500/10 to-orange-500/5': stat.color === 'orange',
           }"
         />
         <div class="relative flex flex-col">
@@ -159,13 +161,10 @@ onMounted(async () => {
                   'bg-blue-500/10 text-blue-500': stat.color === 'blue',
                   'bg-green-500/10 text-green-500': stat.color === 'green',
                   'bg-purple-500/10 text-purple-500': stat.color === 'purple',
-                  'bg-orange-500/10 text-orange-500': stat.color === 'orange'
+                  'bg-orange-500/10 text-orange-500': stat.color === 'orange',
                 }"
               >
-                <UIcon
-                  :name="stat.icon"
-                  class="w-5 h-5"
-                />
+                <UIcon :name="stat.icon" class="w-5 h-5" />
               </div>
               <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
                 {{ stat.name }}
@@ -177,11 +176,15 @@ onMounted(async () => {
                 'text-blue-500': stat.color === 'blue',
                 'text-green-500': stat.color === 'green',
                 'text-purple-500': stat.color === 'purple',
-                'text-orange-500': stat.color === 'orange'
+                'text-orange-500': stat.color === 'orange',
               }"
             >
               <UIcon
-                :name="stat.trendUp ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
+                :name="
+                  stat.trendUp
+                    ? 'i-lucide-trending-up'
+                    : 'i-lucide-trending-down'
+                "
                 class="w-4 h-4"
               />
               <span>{{ stat.trend }}</span>
