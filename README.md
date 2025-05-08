@@ -134,7 +134,7 @@ src/
 
 ```env
 VITE_API_URL=https://jsonplaceholder.typicode.com
-VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_cHJvLXNlYXNuYWlsLTUxLmNsZXJrLmFjY291bnRzLmRldiQ
 ```
 
 ## Contributing
